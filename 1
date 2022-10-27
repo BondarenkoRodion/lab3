@@ -1,18 +1,47 @@
-class TicketBase:
-    number = 0
-    price = 0
+import json
 
-    def __init__(self, number, price):
+
+class Event:
+    def __init__(self, subject, baseprice, duration):
+        if isinstance(subject, str):
+            self.subject = subject
+        else:
+            raise Exception("subject must be of type str")
+
+        if isinstance(baseprice, float) or isinstance(baseprice, int):
+            self.baseprice = baseprice
+        else:
+            raise Exception("baseprice must be a number")
+
+        if isinstance(duration, int):
+            self.duration = duration
+        else:
+            raise Exception("duration must be of type str")
+
+
+
+class TicketBase:
+    pricefactor = 1
+    tickets = []
+
+    def __init__(self, event, number):
+        if isinstance(event, Event):
+            self.event = event
+        else:
+            raise Exception("event must be of type Event")
         if not isinstance(number, int):
             raise Exception("Number must be of type int")
         else:
             self.number = number
-        if not isinstance(price, float) and not isinstance(price, int):
-            raise Exception("Price must be a number")
-        elif price < 0:
-            raise Exception("Price must be a positive number")
-        else:
-            self.price = price
+        self.price = event.baseprice * self.pricefactor
+        self.tickets.append(self)
+
+
+
+    def serialize(self):
+        r = json.dumps(self, default=lambda o: o.__dict__)
+        r = r[0:len(r)-1] + ", \"type\": \"" + self.__class__.__name__ + "\"}"
+        return r
 
     def getprice(self):
         return self.price
@@ -22,35 +51,66 @@ class TicketBase:
 
 
 class RegularTicket(TicketBase):
-    def __init__(self, number, price):
-        super().__init__(number, price)
+    pricefactor = 1
+
+    def __init__(self, event, number):
+        super().__init__(event, number)
 
     def getstring(self):
-        return "This is a regular ticket"
+        return "This is a regular ticket, its price is " + str(self.price) + ", its number is " + str(self.number)
 
 
 class StudentTicket(TicketBase):
-    def __init__(self, number, price):
-        super().__init__(number, price)
-        self.price = self.price * 0.5
+    pricefactor = 0.5
 
     def getstring(self):
-        return "This is a student ticket"
+        return "This is a student ticket, its price is " + str(self.price) + ", its number is " + str(self.number)
 
 
 class LateTicket(TicketBase):
-    def __init__(self, number, price):
-        super().__init__(number, price)
-        self.price = self.price * 1.1
+    pricefactor = 1.1
+
+    def __init__(self, event, number):
+        super().__init__(event, number)
 
     def getstring(self):
-        return "This is a late ticket"
+        return "This is a late ticket, its price is " + str(self.price) + ", its number is " + str(self.number)
 
 
 class AdvanceTicket(TicketBase):
-    def __init__(self, number, price):
-        super().__init__(number, price)
-        self.price = self.price * 0.6
+    pricefactor = 0.6
+
+    def __init__(self, event, number):
+        super().__init__(event, number)
 
     def getstring(self):
-        return "This is an advance ticket"
+        return "This is an advance ticket, its price is " + str(self.price) + ", its number is " + str(self.number)
+
+
+def SerializeTickets(path):
+    file = open(path, "w")
+    result = ""
+    for ticket in TicketBase.tickets:
+        result += ticket.serialize() + "\n"
+    file.write(result)
+    file.close()
+    return result
+
+
+def DeserializeTickets(path):
+    file = open(path, "r")
+    result = ""
+    for jsontext in file:
+        jsonObj = json.loads(jsontext)
+        jsontextevent = jsonObj["event"]
+        e = Event(jsontextevent["subject"], jsontextevent["baseprice"], jsontextevent["duration"])
+        globals()[jsonObj["type"]](e, jsonObj["number"])
+    file.close()
+    return result
+
+
+def GetByNumber(number):
+    for ticket in TicketBase.tickets:
+        if ticket.number == number:
+            return ticket
+    raise Exception("Wrong number")
