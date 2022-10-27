@@ -1,0 +1,56 @@
+class TicketBase:
+    number = 0
+    price = 0
+
+    def __init__(self, number, price):
+        if not isinstance(number, int):
+            raise Exception("Number must be of type int")
+        else:
+            self.number = number
+        if not isinstance(price, float) and not isinstance(price, int):
+            raise Exception("Price must be a number")
+        elif price < 0:
+            raise Exception("Price must be a positive number")
+        else:
+            self.price = price
+
+    def getprice(self):
+        return self.price
+
+    def getstring(self):
+        return "Ticketbase"
+
+
+class RegularTicket(TicketBase):
+    def __init__(self, number, price):
+        super().__init__(number, price)
+
+    def getstring(self):
+        return "This is a regular ticket"
+
+
+class StudentTicket(TicketBase):
+    def __init__(self, number, price):
+        super().__init__(number, price)
+        self.price = self.price * 0.5
+
+    def getstring(self):
+        return "This is a student ticket"
+
+
+class LateTicket(TicketBase):
+    def __init__(self, number, price):
+        super().__init__(number, price)
+        self.price = self.price * 1.1
+
+    def getstring(self):
+        return "This is a late ticket"
+
+
+class AdvanceTicket(TicketBase):
+    def __init__(self, number, price):
+        super().__init__(number, price)
+        self.price = self.price * 0.6
+
+    def getstring(self):
+        return "This is an advance ticket"
