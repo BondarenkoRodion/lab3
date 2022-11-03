@@ -1,56 +1,128 @@
-import enum
+class Ingredient:
+    def __init__(self):
+        pass
 
 
-class PizzaType(enum.IntEnum):
-    FourCheesesWithoutCheese = 1
-    FiveCheesesWithoutCheese = 2
-    PepperoniWithoutPepperoni = 3
-    SixCheesesWithoutCheese = 4
-    Pizza5 = 5
-    PizzaSix = 6
-    PizzaSeven = 7
+class Cheese(Ingredient):
+    def __init__(self):
+        pass
 
 
-class Day(enum.IntEnum):
-    Monday = 1
-    Tuesday = 2
-    Wednesday = 3
-    木曜日 = 4
-    Friday = 5
-    Saturday = 6
-    Sunday = 7
+class Tomato(Ingredient):
+    def __init__(self):
+        pass
 
 
-class Extras(enum.IntEnum):
-    Cheese = 1
-    Mushrooms = 2
-    Corn = 3
-    Pepper = 4
-    Tomatoes = 5
-    Tofu = 6
-    Wood = 7
+class Mushrooms(Ingredient):
+    def __init__(self):
+        pass
 
 
-class Pizza:
-    def __init__(self, pizzatype, extras):
-        if isinstance(pizzatype, PizzaType):
-            self.pizzatype = pizzatype
+class Sauce(Ingredient):
+    def __init__(self):
+        pass
+
+
+class Pepper(Ingredient):
+    def __init__(self):
+        pass
+
+
+class Spinach(Ingredient):
+    def __init__(self):
+        pass
+
+
+class PizzaBase:
+    def __init__(self):
+        self.ingredients = []
+
+    def add_ingredient(self, ingredient):
+        if isinstance(ingredient, Ingredient):
+            self.ingredients.append(ingredient)
         else:
-            raise Exception("pizzatype must be of type PizzaType")
-        if all(isinstance(extra, Extras) for extra in extras):
-            self.extras = extras
-        else:
-            raise Exception("all extras must be of type Extras")
-
-    def output(self):
-        result = str(self.pizzatype) + " with "
-        for extra in self.extras:
-            result += str(extra) + " "
-        return result
+            raise Exception("ingredient must be fo type Ingredient")
 
 
-def orderpizza(dayoftheweek, extras):
-    if isinstance(dayoftheweek, Day):
-        return Pizza(PizzaType(dayoftheweek), extras)
+class Pizza1(PizzaBase):
+    def __init__(self):
+        super().__init__()
+        self.add_ingredient(Tomato())
+        self.add_ingredient(Cheese())
+
+
+class Pizza2(PizzaBase):
+    def __init__(self):
+        super().__init__()
+        self.add_ingredient(Cheese())
+        self.add_ingredient(Tomato())
+        self.add_ingredient(Pepper())
+
+
+class Pizza3(PizzaBase):
+    def __init__(self):
+        super().__init__()
+        self.add_ingredient(Cheese())
+        self.add_ingredient(Tomato())
+        self.add_ingredient(Mushrooms())
+        self.add_ingredient(Sauce())
+        self.add_ingredient(Pepper())
+        self.add_ingredient(Spinach())
+
+
+class Pizza4(PizzaBase):
+    def __init__(self):
+        super().__init__()
+        self.add_ingredient(Cheese())
+        self.add_ingredient(Sauce())
+        self.add_ingredient(Spinach())
+
+
+class Pizza5(PizzaBase):
+    def __init__(self):
+        super().__init__()
+        self.add_ingredient(Cheese())
+        self.add_ingredient(Tomato())
+        self.add_ingredient(Mushrooms())
+        self.add_ingredient(Pepper())
+        self.add_ingredient(Spinach())
+
+
+class Pizza6(PizzaBase):
+    def __init__(self):
+        super().__init__()
+        self.add_ingredient(Cheese())
+        self.add_ingredient(Tomato())
+        self.add_ingredient(Sauce())
+
+
+class Pizza7(PizzaBase):
+    def __init__(self):
+        super().__init__()
+        self.add_ingredient(Cheese())
+        self.add_ingredient(Sauce())
+        self.add_ingredient(Spinach())
+        
+
+def pizza_of_the_day(day):
+    if not (isinstance(day, int) and 1 <= day <= 7):
+        raise Exception("day must be an int in range 1 to 7")
+    elif day == 1:
+        return Pizza1()
+    elif day == 2:
+        return Pizza2()
+    elif day == 3:
+        return Pizza3()
+    elif day == 4:
+        return Pizza4()
+    elif day == 5:
+        return Pizza5()
+    elif day == 6:
+        return Pizza6()
     else:
-        raise Exception("Wrong day")
+        return Pizza7()
+
+
+p = pizza_of_the_day(4)
+p.add_ingredient(Tomato())
+
